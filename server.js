@@ -62,4 +62,4 @@ var server = require('http').createServer(
                 + '</form></body></html>');
         }
     });
-server.listen(80);
+server.listen(process.env.PORT || 80);
