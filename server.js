@@ -1,30 +1,54 @@
-
 var openid = require('openid');
 var url = require('url');
+var querystring = require('querystring');
+var relyingParty = new openid.RelyingParty(
+    'http://triggerrefresh.azurewebsites.net/verify', // Verification URL (yours)
+    null, // Realm (optional, specifies realm for OpenID authentication)
+    false, // Use stateless verification
+    false, // Strict mode
+    []); // List of extensions to enable and include
+
 var server = require('http').createServer(
     function(req, res)
     {
-        var parsedUrl = url.parse(req.url, true);
-        if(parsedUrl.pathname == '/verify')
+        var parsedUrl = url.parse(req.url);
+        if(parsedUrl.pathname == '/authenticate')
+        { 
+          // User supplied identifier
+          var query = querystring.parse(parsedUrl.query);
+          var identifier = query.openid_identifier;
+
+          // Resolve identifier, associate, and build authentication URL
+          relyingParty.authenticate(identifier, false, function(error, authUrl)
+              {
+                if (error)
+                {
+                  res.writeHead(200);
+                  res.end('Authentication failed: ' + error.message);
+                }
+                else if (!authUrl)
+                {
+                  res.writeHead(200);
+                  res.end('Authentication failed');
+                }
+                else
+                {
+                  res.writeHead(302, { Location: authUrl });
+                  res.end();
+                }
+              });
+        }
+        else if(parsedUrl.pathname == '/verify')
         {
             // Verify identity assertion
-            var result = openid.verifyAssertion(req); // or req.url
-            res.writeHead(200);
-            res.end(result.authenticated ? 'Success  ' : 'Failure  ');
-        }
-        else if(parsedUrl.pathname == '/authenticate')
-        {
-            // Resolve identifier, associate, build authentication URL
-            openid.authenticate(
-                parsedUrl.query.openid_identifier, // user supplied identifier
-                'http://triggerrefresh.azurewebsites.net/verify', // our callback URL
-                null, // realm (optional)
-                false, // attempt immediate authentication first?
-                function(authUrl)
-                {
-                    res.writeHead(302, { Location: authUrl });
-                    res.end();
-                });
+            // NOTE: Passing just the URL is also possible
+            relyingParty.verifyAssertion(req, function(error, result)
+            {
+              res.writeHead(200);
+              res.end(!error && result.authenticated 
+                  ? 'Success :)'
+                  : 'Failure :(');
+            });
         }
         else
         {
@@ -38,4 +62,4 @@ var server = require('http').createServer(
                 + '</form></body></html>');
         }
     });
-server.listen(process.env.PORT);
+server.listen(80);
