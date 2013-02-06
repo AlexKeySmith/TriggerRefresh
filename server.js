@@ -46,7 +46,7 @@ var server = require('http').createServer(
             {
               res.writeHead(200);
               res.end(!error && result.authenticated 
-                  ? 'Success :)'
+                  ? 'Success :) :-)'
                   : 'Failure :(');
             });
         }
