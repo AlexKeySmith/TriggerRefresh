@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Trigger refresh</title>
+<script src="/socket.io/socket.io.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+  var socket = io.connect('http://triggerrefresh.alexkey.c9.io');
+  socket.on('news', function (data) {
+    console.log(data);
+    socket.emit('my other event', { my: 'data' });
+  });
+  
+  socket.on('refresh', function(data) {
+      console.log("refresh");
+  });
+  
+  $(document).ready(function()
+  {
+    $("#refresh").on("click", funtion() {
+        socket.emit("refresh");
+    });
+
+  });
+</script>
+
+
+</head>
+
+<body>
+    <button id="refresh">refresh</button>
+</body>
+
+</html>
+
+
+
+
