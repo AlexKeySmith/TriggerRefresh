@@ -15,9 +15,8 @@
       console.log("refresh");
   });
   
-  $(document).ready(function()
-  {
-    $("#refresh").on("click", funtion() {
+  $(document).ready(function() {
+    $("#refresh").on("click", function(event) {
         socket.emit("refresh");
     });
 
