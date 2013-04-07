@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Trigger refresh</title>
+<script src="/socket.io/socket.io.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+  var socket = io.connect('http://triggerrefresh.alexkey.c9.io');
+  socket.on('news', function (data) {
+    console.log(data);
+    socket.emit('my other event', { my: 'data' });
+  });
+  
+  socket.on('refresh', function(data) {
+      console.log("refresh");
+  });
+  
+  $(document).ready(function() {
+    $("#refresh").on("click", function(event) {
+        socket.emit("refresh");
+    });
+
+  });
+</script>
+
+
+</head>
+
+<body>
+    <button id="refresh">refresh</button>
+    <form action="/auth/openid" method="post">
+    <div>
+        <label>OpenID:</label>
+        <input type="text" name="openid_identifier" value="https://www.google.com/accounts/o8/id" />
+    </div>
+    <div>
+        <input type="submit" value="Sign In"/>
+    </div>
+</form>
+</body>
+
+</html>
+
+
+
+

@@ -69,7 +69,7 @@ app.configure(function() {
 io.set("authorization", passportSocketIo.authorize({
     key: 'express.sid', //the cookie where express (or connect) stores its session id.
     secret: 'mooomomasdoiasdoiha', //the session secret to parse the cookie
-    store: mySessionStore, //the session store that express uses
+    store: express.sessionStorage, //the session store that express uses
     fail: function(data, accept) { // *optional* callbacks on success or fail
         accept(null, false); // second param takes boolean on whether or not to allow handshake
     },
@@ -81,7 +81,7 @@ io.set("authorization", passportSocketIo.authorize({
 
 //'verify', // Verification URL (yours) 'http://triggerrefresh.azurewebsites.net/verify'
 
- app.get('/', function(req, res){
+app.get('/', function(req, res){
   res.render('index', { user: req.user });
 });
 
@@ -122,10 +122,8 @@ app.get('/logout', function(req, res){
   req.logout();
   res.redirect('/');
 });
-            
 
-  
-  
+
 io.sockets.on('connection', function (socket) {
   socket.emit('connected');
   socket.on('refresh', function (data) {

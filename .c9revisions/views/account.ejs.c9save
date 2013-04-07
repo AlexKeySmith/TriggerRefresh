@@ -1,0 +1,2 @@
+{"ts":1364844327359,"silentsave":true,"restoring":false,"patch":[[]],"length":0}
+{"contributors":[],"silentsave":false,"ts":1364844328936,"patch":[[{"diffs":[[1,"<p>OpenID: <%= user.identifier %></p>"]],"start1":0,"start2":0,"length1":0,"length2":37}]],"length":37,"saved":false}
