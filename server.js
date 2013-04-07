@@ -1,9 +1,11 @@
 
 var express = require('express')
   , app = express()
+  , partials = require('express-partials')
   , server = require('http').createServer(app)
   , passport = require('passport')
   , util = require('util')
+  , store = new express.session.MemoryStore
   , OpenIDStrategy = require('passport-openid').Strategy
   , passportSocketIo = require("passport.socketio")
   , io = require('socket.io').listen(server);
@@ -47,15 +49,17 @@ passport.use(new OpenIDStrategy({
 ));
 
 
-// configure Express
+  // configure Express
 app.configure(function() {
+  app.use(partials());
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
-  app.use(express.logger());
+
+  //app.use(express.logger());
   app.use(express.cookieParser());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.session({ secret: 'mooomomasdoiasdoiha' }));
+  app.use(express.session({ secret: 'mooomomasdoiasdoiha', store: store }));
   // Initialize Passport!  Also use passport.session() middleware, to support
   // persistent login sessions (recommended).
   app.use(passport.initialize());
@@ -67,9 +71,9 @@ app.configure(function() {
 
 
 io.set("authorization", passportSocketIo.authorize({
-    key: 'express.sid', //the cookie where express (or connect) stores its session id.
+    key: 'connect.sid', //the cookie where express (or connect) stores its session id.
     secret: 'mooomomasdoiasdoiha', //the session secret to parse the cookie
-    store: express.sessionStorage, //the session store that express uses
+    store: store, //the session store that express uses
     fail: function(data, accept) { // *optional* callbacks on success or fail
         accept(null, false); // second param takes boolean on whether or not to allow handshake
     },
@@ -126,13 +130,14 @@ app.get('/logout', function(req, res){
 
 io.sockets.on('connection', function (socket) {
   socket.emit('connected');
+  socket.join(socket.handshake.user.identifier);
   socket.on('refresh', function (data) {
     console.log("refresh: " + data);
-    socket.broadcast.emit("refresh");
+    io.sockets.in(socket.handshake.user.identifier).emit('refresh');
   });
 });
 
-app.listen(process.env.PORT || 80);
+server.listen(process.env.PORT || 80);
 
 // Simple route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
