@@ -28,13 +28,15 @@ var triggerRefresh = function($) {
             
         });
         
-        $("#refresh").on("click", function(event) {
-            socket.emit("refresh");
+        $(document).on("keydown", function(e) {
+            /*alt + r or alt + R*/
+           if(e.altKey && (e.which == 114 || e.which == 82 )) {
+                socket.emit('refresh');
+            }
         });
     }
     
-    function alreadySetup() {
-        
+    function alreadySetup() {  
         return url.query[alreadySetupQueryString];
     }
     
@@ -45,19 +47,34 @@ var triggerRefresh = function($) {
     
     
     function hideLoginButton() {
-        $("#triggerRefreshOpenLogin").hide();
+        $("#triggerRefreshOpenLogin, #triggerRefreshModal").hide();
     }
     
     $.when(getSocketIO, loginOk).done(hideLoginButton,connectSocket);
     
     $("document").ready(function() {
         
-        $("<button id='triggerRefreshOpenLogin'>login</button>").appendTo("body");
-        $("<button id='refresh'>refresh</button>").appendTo("body");
+        $("<div style='width:100%; height:100%; background-color:rgba(0,0,0,.8); position:absolute; top:0; left:0;' id='triggerRefreshModal'>" +
+            "  <div style='top:30%; left:40%; position:relative; width:20%; height:20%; min-width:400px; min-height:300px; padding:15px; background-color:white;'>" +
+            "   <h1>Trigger Refresh</h1>" +
+            "   <p>Login, so we can sync your browsers</p>" +
+            "      <button id='triggerRefreshOpenLogin'>login</button>" +
+            "  </div>" +
+            "</div>").appendTo("body");
         
         $("#triggerRefreshOpenLogin").on("click", function() {
-             window.open(centralSite);
+        
+            var serviceWidth = 1000;
+            var serviceHeight = 768;
+            var left = Math.round(screen.width / 2);
+            var top = Math.round(screen.height / 2);
+            
+            var signIn = window.open(centralSite, "triggerRefreshSignIn",
+                "left=" + left + ",top=" + top + ",width=" + serviceWidth + ",height=" + serviceHeight +
+                ",personalbar=0,toolbar=0,scrollbars=1,resizable=1"
+            );
         });
+
         
         if(alreadySetup()) {
             loginOk.resolve();

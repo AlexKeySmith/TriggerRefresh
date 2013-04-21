@@ -85,13 +85,10 @@ io.set("authorization", passportSocketIo.authorize({
 
 //'verify', // Verification URL (yours) 'http://triggerrefresh.azurewebsites.net/verify'
 
-app.get('/', function(req, res){
+app.get('/', ensureAuthenticated, function(req, res){
   res.render('index', { user: req.user });
 });
 
-app.get('/account', ensureAuthenticated, function(req, res){
-  res.render('account', { user: req.user });
-});
 
 app.get('/login', function(req, res){
   res.render('login', { user: req.user });

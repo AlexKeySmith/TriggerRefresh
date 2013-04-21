@@ -1,8 +1,4 @@
-<% if (!user) { %>
-    <h2>Welcome! Please log in.</h2>
-<% } else { %>
-	<h2>Hello, <%= user.identifier %>.</h2>
-    <script>
-        window.opener.triggerRefresh.loggedIn();
-    </script>
-<% } %>
+<h2>Hello, <%= user.identifier %>.</h2>
+<script>
+    window.opener.triggerRefresh.loggedIn();
+</script>
