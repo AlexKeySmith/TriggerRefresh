@@ -54,15 +54,24 @@ var triggerRefresh = function($) {
     
     $("document").ready(function() {
         
-        $("<div style='width:100%; height:100%; background-color:rgba(0,0,0,.8); position:absolute; top:0; left:0;' id='triggerRefreshModal'>" +
-            "  <div style='top:30%; left:40%; position:relative; width:20%; height:20%; min-width:400px; min-height:300px; padding:15px; background-color:white;'>" +
-            "   <h1>Trigger Refresh</h1>" +
-            "   <p>Login, so we can sync your browsers</p>" +
-            "      <button id='triggerRefreshOpenLogin'>login</button>" +
-            "  </div>" +
+        $("<div style='width:100%; height:100%; background-color:rgba(0,0,0,.8); position:absolute; top:0; left:0; display:none;' id='triggerRefreshModal'>" +
+            "   <div style='top:30%; left:40%; position:relative; width:20%; height:20%; min-width:400px; min-height:300px; padding:15px; background-color:white;'>" +
+            "       <h1>Trigger Refresh</h1>" +
+            "       <p>Login, so we can sync your browsers</p>" +
+            "       <form id='triggerRefreshLoginForm' action='"+ centralSite +"auth/openid' method='post' target='triggerRefreshSignIn'>" +
+            "           <div>" +
+            "               <label>OpenID:</label>" +
+            "	            <input type='text' name='openid_identifier' value='https://www.google.com/accounts/o8/id' /><br/>" +
+            "	        </div>" +
+            "           <div>" +
+            "    	        <input type='submit' value='Submit'/>" +
+            "	        </div>" +
+            "           <a href='" + centralSite + "/auth/openid?openid_identifier=https%3A%2F%2Fwww.google.com%2Faccounts%2Fo8%2Fid'>login with google</a>" + 
+            "       </form>" +
+            "   </div>" +
             "</div>").appendTo("body");
         
-        $("#triggerRefreshOpenLogin").on("click", function() {
+        $("#triggerRefreshLoginForm").on("submit", function() {
         
             var serviceWidth = 1000;
             var serviceHeight = 768;
@@ -75,9 +84,10 @@ var triggerRefresh = function($) {
             );
         });
 
-        
         if(alreadySetup()) {
             loginOk.resolve();
+        } else {
+            $("#triggerRefreshModal").show();
         }
         
     });

@@ -101,7 +101,7 @@ app.get('/login', function(req, res){
 //   the user to their OpenID provider.  After authenticating, the OpenID
 //   provider will redirect the user back to this application at
 //   /auth/openid/return
-app.post('/auth/openid', 
+app.get('/auth/openid', 
   passport.authenticate('openid', { failureRedirect: '/login' }),
   function(req, res) {
     res.redirect('/');
