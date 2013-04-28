@@ -47,41 +47,43 @@ var triggerRefresh = function($) {
     
     
     function hideLoginButton() {
-        $("#triggerRefreshOpenLogin, #triggerRefreshModal").hide();
+        $("#triggerRefreshModal").hide();
     }
     
-    $.when(getSocketIO, loginOk).done(hideLoginButton,connectSocket);
+    function showLoggedInMessage() {
+        $("#loginPanel").hide();
+        $("#loggedIn").show();
+        
+    }
+    
+    $.when(getSocketIO, loginOk).done(connectSocket, showLoggedInMessage);
     
     $("document").ready(function() {
         
         $("<div style='width:100%; height:100%; background-color:rgba(0,0,0,.8); position:absolute; top:0; left:0; display:none;' id='triggerRefreshModal'>" +
-            "   <div style='top:30%; left:40%; position:relative; width:20%; height:20%; min-width:400px; min-height:300px; padding:15px; background-color:white;'>" +
+            "   <div id='loginPanelModal' style='top:30%; left:40%; position:relative; width:20%; height:20%; min-width:400px; min-height:300px; padding:15px; background-color:white;'>" +
             "       <h1>Trigger Refresh</h1>" +
-            "       <p>Login, so we can sync your browsers</p>" +
-            "       <form id='triggerRefreshLoginForm' action='"+ centralSite +"auth/openid' method='post' target='triggerRefreshSignIn'>" +
-            "           <div>" +
-            "               <label>OpenID:</label>" +
-            "	            <input type='text' name='openid_identifier' value='https://www.google.com/accounts/o8/id' /><br/>" +
-            "	        </div>" +
-            "           <div>" +
-            "    	        <input type='submit' value='Submit'/>" +
-            "	        </div>" +
-            "           <a href='" + centralSite + "/auth/openid?openid_identifier=https%3A%2F%2Fwww.google.com%2Faccounts%2Fo8%2Fid'>login with google</a>" + 
-            "       </form>" +
-            "   </div>" +
+            "       <div id='loginPanel'>" +
+            "           <p>Login, so we can sync your browsers:</p>" +
+            "           <a class='triggerRefreshLoginService' target='triggerRefreshLogin' href='" + centralSite + "/auth/openid?openid_identifier=https%3A%2F%2Fwww.google.com%2Faccounts%2Fo8%2Fid'>login with google</a>" + 
+            "       </div>"+
+            "       <div id='loggedIn' style='display:none;'>Logged in, do the same on your other browsers. You can then press <kbd>alt</kbd> + <kbd>r</kbd> to sync the refreshes.</div>" +
+            "   </div>" + 
             "</div>").appendTo("body");
         
-        $("#triggerRefreshLoginForm").on("submit", function() {
-        
-            var serviceWidth = 1000;
-            var serviceHeight = 768;
+        $("body").on("click", ".triggerRefreshLoginService", function(event) {
+            event.preventDefault();
+            var width = 1000;
+            var height = 768;
             var left = Math.round(screen.width / 2);
             var top = Math.round(screen.height / 2);
             
-            var signIn = window.open(centralSite, "triggerRefreshSignIn",
-                "left=" + left + ",top=" + top + ",width=" + serviceWidth + ",height=" + serviceHeight +
-                ",personalbar=0,toolbar=0,scrollbars=1,resizable=1"
+            var signIn = window.open($(this).attr('href'), $(this).attr('target'),
+                "left=" + left + ",top=" + top + ",width=" + width + ",height=" + height +
+                ",personalbar=0,toolbar=0,scrollbars=1,resizable=1,"
             );
+
+            return false;
         });
 
         if(alreadySetup()) {

@@ -24,7 +24,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(identifier, done) {
-  done(null, { identifier: identifier });
+  done(null, { identifier: identifier  });
 });
 
 // Use the OpenIDStrategy within Passport.
