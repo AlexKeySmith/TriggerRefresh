@@ -9,7 +9,7 @@ var express = require('express')
   , OpenIDStrategy = require('passport-openid').Strategy
   , passportSocketIo = require("passport.socketio")
   , io = require('socket.io').listen(server)
-  , url = 'http://triggerrefresh.azurewebsites.co.uk/';
+  , url = 'http://triggerrefresh.azurewebsites.net/';
 
 
     
