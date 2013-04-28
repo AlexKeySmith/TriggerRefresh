@@ -9,7 +9,7 @@ var Url=function(){var a={protocol:"protocol",host:"hostname",port:"port",path:"
 
 var triggerRefresh = function($) {
     
-    var centralSite = "http://triggerrefresh.alexkey.c9.io/"
+    var centralSite = 'http://triggerrefresh.azurewebsites.net/'
         , loginOk = $.Deferred()
         , getSocketIO = $.getScript(centralSite + "socket.io/socket.io.js")
         , alreadySetupQueryString = 'triggerRefreshLoaded';

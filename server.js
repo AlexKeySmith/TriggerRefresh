@@ -8,7 +8,8 @@ var express = require('express')
   , store = new express.session.MemoryStore
   , OpenIDStrategy = require('passport-openid').Strategy
   , passportSocketIo = require("passport.socketio")
-  , io = require('socket.io').listen(server);
+  , io = require('socket.io').listen(server)
+  , url = 'http://triggerrefresh.azurewebsites.co.uk/';
 
 
     
@@ -32,8 +33,8 @@ passport.deserializeUser(function(identifier, done) {
 //   credentials (in this case, an OpenID identifier), and invoke a callback
 //   with a user object.
 passport.use(new OpenIDStrategy({
-    returnURL: 'http://triggerrefresh.alexkey.c9.io/auth/openid/return',
-    realm: 'http://triggerrefresh.alexkey.c9.io/'
+    returnURL: url + 'auth/openid/return',
+    realm: url
   },
   function(identifier, done) {
     // asynchronous verification, for effect...
